@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Lab0Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyApp(innerPadding)
+                    CourseListScreen(innerPadding)
                 }
             }
         }
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(innerPaddingValues: PaddingValues, courses: List<Course> =CourseDataProvider.courses.take(8)
+fun CourseListScreen(innerPaddingValues: PaddingValues, courses: List<Course> =CourseDataProvider.courses.take(8)
 ) {
     Surface {
         LazyColumn(Modifier
@@ -120,7 +120,7 @@ fun CourseCard(course: Course) {
 @Composable
 fun GreetingPreview1() {
     Lab0Theme {
-        MyApp(PaddingValues(), courses = CourseDataProvider.courses.take(3))
+        CourseListScreen(PaddingValues(), courses = CourseDataProvider.courses.take(3))
     }
 }
 
@@ -133,7 +133,7 @@ fun GreetingPreview1() {
 @Composable
 fun GreetingPreviewDark() {
     Lab0Theme {
-        MyApp(PaddingValues(), courses = CourseDataProvider.courses.take(3))
+        CourseListScreen(PaddingValues(), courses = CourseDataProvider.courses.take(3))
     }
 }
 
