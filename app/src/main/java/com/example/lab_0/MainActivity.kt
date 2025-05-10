@@ -1,11 +1,17 @@
 package com.example.lab_0
 
+import android.R.attr.rotation
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,10 +35,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.rotationMatrix
 import com.example.lab_0.data.Course
 import com.example.lab_0.data.CourseDataProvider
 import com.example.lab_0.ui.theme.Lab0Theme
@@ -52,7 +62,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(innerPaddingValues: PaddingValues, courses: List<Course> =CourseDataProvider.courses.take(5)
+fun MyApp(innerPaddingValues: PaddingValues, courses: List<Course> =CourseDataProvider.courses.take(8)
 ) {
     Surface {
         LazyColumn(Modifier
@@ -66,8 +76,15 @@ fun MyApp(innerPaddingValues: PaddingValues, courses: List<Course> =CourseDataPr
 
 @Composable
 fun CourseCard(course: Course) {
-    var expanded = remember {mutableStateOf(false)}
-    var expandedPadding = if (expanded.value)24.dp else 0.dp
+    var expanded = rememberSaveable {mutableStateOf(false)}
+    var expandedPadding = animateDpAsState(
+        if (expanded.value)32.dp else 0.dp,
+                animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = Spring.StiffnessLow
+    )
+    )
+
     Card (
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 12.dp ),
@@ -77,10 +94,10 @@ fun CourseCard(course: Course) {
             .padding(24.dp)) {
             Column(modifier = Modifier
                 .weight(1f)
-                .padding(bottom = expandedPadding)
+                .padding(bottom = expandedPadding.value.coerceAtLeast(0.dp))
                 .animateContentSize()) {
                 Text(text = course.title, style = MaterialTheme.typography.titleLarge)
-                Row (){
+                Row {
                     Text(text = course.code, modifier = Modifier.weight(1f))
                     Text(text = "Credit Hour: ${course.creditHours}")
                 }
